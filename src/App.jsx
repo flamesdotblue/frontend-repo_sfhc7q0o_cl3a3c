@@ -8,9 +8,11 @@ import { motion } from 'framer-motion';
 import Spline from '@splinetool/react-spline';
 
 export default function App() {
+  // UI state - page orchestration without a router
   const [currentPage, setCurrentPage] = useState('beranda');
   const [user, setUser] = useState(null);
 
+  // Restore session
   useEffect(() => {
     const s = localStorage.getItem('mh_current_user');
     if (s) setUser(JSON.parse(s));
@@ -29,7 +31,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0b1026] text-white">
-      <div className="fixed inset-0 -z-0 pointer-events-none" aria-hidden>
+      {/* Ambient background lighting */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden>
         <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_20%_-20%,_rgba(124,187,255,0.25),_transparent),radial-gradient(80%_60%_at_80%_0%,_rgba(184,169,255,0.25),_transparent)]" />
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/10 to-transparent" />
       </div>
@@ -38,6 +41,7 @@ export default function App() {
 
       {currentPage === 'beranda' && (
         <main>
+          {/* Hero with Spline 3D scene */}
           <section className="relative">
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-[#0b1026] to-[#0b1026]" />
             <div className="relative max-w-6xl mx-auto px-4 pt-14 pb-16 grid lg:grid-cols-2 gap-10 items-center">
@@ -74,12 +78,14 @@ export default function App() {
               </div>
 
               <div className="relative h-[420px] lg:h-[520px] rounded-3xl overflow-hidden ring-1 ring-white/10 bg-black/40">
-                <Spline scene="https://prod.spline.design/4Zh-Q6DWWp5yPnQf/scene.splinecode" style={{ width: '100%', height: '100%' }} />
+                {/* Use the provided Spline asset and keep interactions available */}
+                <Spline scene="https://prod.spline.design/wwTRdG1D9CkNs368/scene.splinecode" style={{ width: '100%', height: '100%' }} />
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#0b1026] via-transparent to-transparent opacity-70" />
               </div>
             </div>
           </section>
 
+          {/* Feature highlights */}
           <section className="relative max-w-6xl mx-auto px-4 py-12">
             <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(70%_60%_at_10%_-10%,_rgba(124,187,255,0.18),_transparent),radial-gradient(70%_60%_at_90%_0%,_rgba(184,169,255,0.18),_transparent)]" />
             <div className="relative grid md:grid-cols-3 gap-6">

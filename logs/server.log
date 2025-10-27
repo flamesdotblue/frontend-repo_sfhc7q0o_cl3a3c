@@ -3,10 +3,9 @@
 > vite
 
 
-  VITE v5.4.20  ready in 203 ms
+  VITE v5.4.20  ready in 205 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://172.20.4.227:3000/
-2:52:23 AM [vite] ✨ new dependencies optimized: lucide-react
-2:52:23 AM [vite] ✨ optimized dependencies changed. reloading
-The file does not exist at "/home/workspace/node_modules/.vite/deps/chunk-I4MZPW7S.js?v=35394813" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+3:21:56 AM [vite] ✨ new dependencies optimized: framer-motion, @splinetool/react-spline
+3:21:56 AM [vite] ✨ optimized dependencies changed. reloading

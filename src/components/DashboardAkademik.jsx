@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Calendar, Plus, Edit, Trash2, Notebook, Link as LinkIcon, ExternalLink, Settings } from 'lucide-react';
+import { Plus, Edit, Trash2, Link as LinkIcon, ExternalLink, Settings } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 function useLocalStorage(key, initial) {
   const [state, setState] = useState(() => {
@@ -91,30 +92,40 @@ export default function DashboardAkademik({ currentPage, onNavigate }) {
   };
   const removeShortcut = (id) => setShortcuts(shortcuts.filter((x) => x.id !== id));
 
-  const Section = ({ title, children, action }) => (
-    <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-100 p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-[#050F2A]">{title}</h3>
-        {action}
+  const Glass = ({ children, className = '' }) => (
+    <div className={`relative ${className}`}>
+      <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-br from-[#7BBBFF]/40 via-[#B8A9FF]/30 to-transparent opacity-40 blur-xl" />
+      <div className="relative rounded-3xl bg-white/5 ring-1 ring-white/10 backdrop-blur-2xl text-white">
+        {children}
       </div>
-      {children}
     </div>
   );
 
+  const Section = ({ title, action, children }) => (
+    <Glass className="p-5">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-white/95 tracking-wide">{title}</h3>
+        {action}
+      </div>
+      {children}
+    </Glass>
+  );
+
   const DashboardHome = () => (
-    <div className="grid lg:grid-cols-3 gap-6">
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="grid lg:grid-cols-3 gap-6">
       <Section title="Agenda Terdekat" action={
         <button onClick={() => onNavigate('tugas')} className="text-sm text-[#7BBBFF] hover:underline">Kelola</button>
       }>
         <ul className="space-y-3">
-          {upcoming.length === 0 && <p className="text-slate-500 text-sm">Belum ada agenda.</p>}
+          {upcoming.length === 0 && <p className="text-white/70 text-sm">Belum ada agenda.</p>}
           {upcoming.map((t) => (
             <li key={t.id} className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-slate-800">{t.title} <span className="ml-2 text-xs px-2 py-0.5 rounded bg-[#F2FDFF] text-[#050F2A]">{t.type}</span></p>
-                <p className="text-sm text-slate-500">{new Date(t.date).toLocaleDateString()}</p>
+                <p className="font-medium text-white/90">{t.title} <span className="ml-2 text-xs px-2 py-0.5 rounded bg-white/10 ring-1 ring-white/10">{t.type}</span></p>
+                <p className="text-sm text-white/60">{new Date(t.date).toLocaleDateString()}</p>
               </div>
-              <span className={`text-xs font-medium px-2 py-1 rounded-full ${t.daysLeft < 0 ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>
+              <span className={`text-xs font-medium px-2 py-1 rounded-full ${t.daysLeft < 0 ? 'bg-rose-500/20 text-rose-200' : 'bg-emerald-500/20 text-emerald-200'}`}
+              >
                 {t.daysLeft < 0 ? 'Lewat' : `${t.daysLeft} hari lagi`}
               </span>
             </li>
@@ -127,12 +138,12 @@ export default function DashboardAkademik({ currentPage, onNavigate }) {
       }>
         <div className="grid grid-cols-1 gap-3">
           {notes.slice(0, 4).map((n) => (
-            <div key={n.id} className="p-3 rounded-lg bg-[#F2FDFF]">
-              <p className="font-medium text-[#050F2A]">{n.title}</p>
-              <p className="text-sm text-slate-600 line-clamp-2">{n.content}</p>
+            <div key={n.id} className="p-3 rounded-2xl bg-white/5 ring-1 ring-white/10">
+              <p className="font-medium text-white/95">{n.title}</p>
+              <p className="text-sm text-white/70 line-clamp-2">{n.content}</p>
             </div>
           ))}
-          {notes.length === 0 && <p className="text-slate-500 text-sm">Belum ada catatan.</p>}
+          {notes.length === 0 && <p className="text-white/70 text-sm">Belum ada catatan.</p>}
         </div>
       </Section>
 
@@ -141,56 +152,58 @@ export default function DashboardAkademik({ currentPage, onNavigate }) {
       }>
         <div className="grid grid-cols-1 gap-2">
           {shortcuts.map((s) => (
-            <a key={s.id} href={s.url} target="_blank" rel="noreferrer" className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-50 transition">
+            <a key={s.id} href={s.url} target="_blank" rel="noreferrer" className="flex items-center justify-between px-3 py-2 rounded-2xl hover:bg-white/5 transition ring-1 ring-white/10">
               <div className="flex items-center gap-2">
                 <LinkIcon size={18} className="text-[#7BBBFF]" />
-                <span className="text-slate-700">{s.name}</span>
+                <span className="text-white/90">{s.name}</span>
               </div>
-              <ExternalLink size={16} className="text-slate-400" />
+              <ExternalLink size={16} className="text-white/50" />
             </a>
           ))}
         </div>
       </Section>
-    </div>
+    </motion.div>
   );
 
   const PageTugas = () => (
-    <div className="space-y-6">
-      <div className="bg-white/80 rounded-2xl border border-slate-100 p-5">
-        <h3 className="font-semibold text-[#050F2A] mb-3">Tambah Tugas/Jadwal</h3>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+      <Glass className="p-5">
+        <h3 className="font-semibold text-white/95 mb-3">Tambah Tugas/Jadwal</h3>
         <div className="grid md:grid-cols-4 gap-3">
           <input
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="px-3 py-2 border border-slate-200 rounded-md"
+            className="px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-white placeholder:text-white/50"
             placeholder="Judul (mis. UTS Matematika)"
           />
           <input
             type="date"
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
-            className="px-3 py-2 border border-slate-200 rounded-md"
+            className="px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-white"
           />
           <select
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
-            className="px-3 py-2 border border-slate-200 rounded-md"
+            className="px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-white"
           >
-            <option>Tugas</option>
-            <option>Jadwal</option>
+            <option className="bg-[#0c142f]">Tugas</option>
+            <option className="bg-[#0c142f]">Jadwal</option>
           </select>
-          <button onClick={addTask} className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#7BBBFF] text-white rounded-md">
-            <Plus size={16} /> Tambah
-          </button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={addTask} className="relative inline-flex items-center justify-center gap-2 px-4 py-2 text-white rounded-xl">
+            <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#7BBBFF] to-[#B8A9FF]" />
+            <span className="absolute inset-0 rounded-xl ring-1 ring-white/20" />
+            <span className="relative inline-flex items-center gap-2"><Plus size={16} /> Tambah</span>
+          </motion.button>
         </div>
-      </div>
+      </Glass>
 
-      <div className="bg-white/80 rounded-2xl border border-slate-100 p-5">
-        <h3 className="font-semibold text-[#050F2A] mb-3">Daftar Tugas & Jadwal</h3>
+      <Glass className="p-5">
+        <h3 className="font-semibold text-white/95 mb-3">Daftar Tugas & Jadwal</h3>
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
+          <table className="min-w-full text-sm text-white/90">
             <thead>
-              <tr className="text-left text-slate-600">
+              <tr className="text-left text-white/70">
                 <th className="py-2">Judul</th>
                 <th className="py-2">Jenis</th>
                 <th className="py-2">Tanggal</th>
@@ -199,16 +212,16 @@ export default function DashboardAkademik({ currentPage, onNavigate }) {
             </thead>
             <tbody>
               {tasks.map((t) => (
-                <tr key={t.id} className="border-t border-slate-100">
+                <tr key={t.id} className="border-t border-white/10">
                   <td className="py-2">{t.title}</td>
-                  <td className="py-2"><span className="px-2 py-1 rounded bg-[#F2FDFF] text-[#050F2A] text-xs">{t.type}</span></td>
+                  <td className="py-2"><span className="px-2 py-1 rounded bg-white/10 ring-1 ring-white/10 text-xs">{t.type}</span></td>
                   <td className="py-2">{new Date(t.date).toLocaleDateString()}</td>
                   <td className="py-2">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => editTask(t.id)} className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200">
+                      <button onClick={() => editTask(t.id)} className="px-2 py-1 rounded bg-white/10 hover:bg-white/20">
                         <Edit size={16} />
                       </button>
-                      <button onClick={() => removeTask(t.id)} className="px-2 py-1 rounded bg-rose-100 text-rose-700 hover:bg-rose-200">
+                      <button onClick={() => removeTask(t.id)} className="px-2 py-1 rounded bg-rose-500/20 text-rose-200 hover:bg-rose-500/30">
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -217,110 +230,114 @@ export default function DashboardAkademik({ currentPage, onNavigate }) {
               ))}
               {tasks.length === 0 && (
                 <tr>
-                  <td className="py-4 text-slate-500" colSpan={4}>Belum ada data.</td>
+                  <td className="py-4 text-white/70" colSpan={4}>Belum ada data.</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
+      </Glass>
+    </motion.div>
   );
 
   const PageCatatan = () => (
-    <div className="space-y-6">
-      <div className="bg-white/80 rounded-2xl border border-slate-100 p-5">
-        <h3 className="font-semibold text-[#050F2A] mb-3">Buat Catatan</h3>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+      <Glass className="p-5">
+        <h3 className="font-semibold text-white/95 mb-3">Buat Catatan</h3>
         <div className="grid gap-3">
           <input
             value={noteForm.title}
             onChange={(e) => setNoteForm({ ...noteForm, title: e.target.value })}
-            className="px-3 py-2 border border-slate-200 rounded-md"
+            className="px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-white placeholder:text-white/50"
             placeholder="Judul catatan"
           />
           <textarea
             value={noteForm.content}
             onChange={(e) => setNoteForm({ ...noteForm, content: e.target.value })}
             rows={4}
-            className="px-3 py-2 border border-slate-200 rounded-md"
+            className="px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-white placeholder:text-white/50"
             placeholder="Ringkasan materi, poin penting, dsb."
           />
           <div>
-            <button onClick={addNote} className="inline-flex items-center gap-2 px-4 py-2 bg-[#B8A9FF] text-white rounded-md">
-              <Plus size={16} /> Simpan Catatan
-            </button>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={addNote} className="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white">
+              <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#B8A9FF] to-[#7BBBFF]" />
+              <span className="absolute inset-0 rounded-xl ring-1 ring-white/20" />
+              <span className="relative inline-flex items-center gap-2"><Plus size={16} /> Simpan Catatan</span>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </Glass>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {notes.map((n) => (
-          <div key={n.id} className="bg-white/80 rounded-xl border border-slate-100 p-4">
+          <Glass key={n.id} className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-[#050F2A]">{n.title}</h4>
+              <h4 className="font-semibold text-white/95">{n.title}</h4>
               <div className="flex items-center gap-2">
-                <button onClick={() => editNote(n.id)} className="p-2 rounded bg-slate-100 hover:bg-slate-200">
+                <button onClick={() => editNote(n.id)} className="p-2 rounded-xl bg-white/10 hover:bg-white/20">
                   <Edit size={16} />
                 </button>
-                <button onClick={() => removeNote(n.id)} className="p-2 rounded bg-rose-100 text-rose-700 hover:bg-rose-200">
+                <button onClick={() => removeNote(n.id)} className="p-2 rounded-xl bg-rose-500/20 text-rose-200 hover:bg-rose-500/30">
                   <Trash2 size={16} />
                 </button>
               </div>
             </div>
-            <p className="text-sm text-slate-700 whitespace-pre-wrap">{n.content}</p>
-          </div>
+            <p className="text-sm text-white/85 whitespace-pre-wrap">{n.content}</p>
+          </Glass>
         ))}
-        {notes.length === 0 && <p className="text-slate-500">Belum ada catatan.</p>}
+        {notes.length === 0 && <p className="text-white/70">Belum ada catatan.</p>}
       </div>
-    </div>
+    </motion.div>
   );
 
   const PageShortcut = () => (
-    <div className="space-y-6">
-      <div className="bg-white/80 rounded-2xl border border-slate-100 p-5">
-        <h3 className="font-semibold text-[#050F2A] mb-3">Tambah Shortcut</h3>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+      <Glass className="p-5">
+        <h3 className="font-semibold text-white/95 mb-3">Tambah Shortcut</h3>
         <div className="grid md:grid-cols-3 gap-3">
           <input
             value={shortcutForm.name}
             onChange={(e) => setShortcutForm({ ...shortcutForm, name: e.target.value })}
-            className="px-3 py-2 border border-slate-200 rounded-md"
+            className="px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-white placeholder:text-white/50"
             placeholder="Nama (mis. Scholar)"
           />
           <input
             value={shortcutForm.url}
             onChange={(e) => setShortcutForm({ ...shortcutForm, url: e.target.value })}
-            className="px-3 py-2 border border-slate-200 rounded-md"
+            className="px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-white placeholder:text-white/50"
             placeholder="https://..."
           />
-          <button onClick={addShortcut} className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#7BBBFF] text-white rounded-md">
-            <Plus size={16} /> Tambah
-          </button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={addShortcut} className="relative inline-flex items-center justify-center gap-2 px-4 py-2 text-white rounded-xl">
+            <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#7BBBFF] to-[#B8A9FF]" />
+            <span className="absolute inset-0 rounded-xl ring-1 ring-white/20" />
+            <span className="relative inline-flex items-center gap-2"><Plus size={16} /> Tambah</span>
+          </motion.button>
         </div>
-      </div>
+      </Glass>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {shortcuts.map((s) => (
-          <div key={s.id} className="bg-white/80 rounded-xl border border-slate-100 p-4 flex items-center justify-between">
+          <Glass key={s.id} className="p-4 flex items-center justify-between">
             <div>
-              <p className="font-semibold text-[#050F2A]">{s.name}</p>
+              <p className="font-semibold text-white/95">{s.name}</p>
               <a href={s.url} target="_blank" rel="noreferrer" className="text-sm text-[#7BBBFF] hover:underline break-all">{s.url}</a>
             </div>
             <div className="flex items-center gap-2">
-              <a href={s.url} target="_blank" rel="noreferrer" className="p-2 rounded bg-slate-100 hover:bg-slate-200" title="Buka">
+              <a href={s.url} target="_blank" rel="noreferrer" className="p-2 rounded-xl bg-white/10 hover:bg-white/20" title="Buka">
                 <ExternalLink size={16} />
               </a>
-              <button onClick={() => editShortcut(s.id)} className="p-2 rounded bg-slate-100 hover:bg-slate-200" title="Ubah">
+              <button onClick={() => editShortcut(s.id)} className="p-2 rounded-xl bg-white/10 hover:bg-white/20" title="Ubah">
                 <Edit size={16} />
               </button>
-              <button onClick={() => removeShortcut(s.id)} className="p-2 rounded bg-rose-100 text-rose-700 hover:bg-rose-200" title="Hapus">
+              <button onClick={() => removeShortcut(s.id)} className="p-2 rounded-xl bg-rose-500/20 text-rose-200 hover:bg-rose-500/30" title="Hapus">
                 <Trash2 size={16} />
               </button>
             </div>
-          </div>
+          </Glass>
         ))}
-        {shortcuts.length === 0 && <p className="text-slate-500">Belum ada shortcut.</p>}
+        {shortcuts.length === 0 && <p className="text-white/70">Belum ada shortcut.</p>}
       </div>
-    </div>
+    </motion.div>
   );
 
   const PageProfil = () => {
@@ -342,54 +359,59 @@ export default function DashboardAkademik({ currentPage, onNavigate }) {
     };
 
     return (
-      <div className="space-y-6">
-        <div className="bg-white/80 rounded-2xl border border-slate-100 p-5">
-          <h3 className="font-semibold text-[#050F2A] mb-3">Pengaturan Profil</h3>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+        <Glass className="p-5">
+          <h3 className="font-semibold text-white/95 mb-3">Pengaturan Profil</h3>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700">Nama</label>
+              <label className="block text-sm font-medium text-white/90">Nama</label>
               <input
                 value={user.name}
                 onChange={(e) => setUser({ ...user, name: e.target.value })}
-                className="mt-1 px-3 py-2 border border-slate-200 rounded-md w-full"
+                className="mt-1 px-3 py-2 rounded-xl w-full bg-white/10 ring-1 ring-white/15 text-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700">Email</label>
-              <input disabled value={user.email} className="mt-1 px-3 py-2 border border-slate-200 rounded-md w-full bg-slate-50 text-slate-500" />
+              <label className="block text-sm font-medium text-white/90">Email</label>
+              <input disabled value={user.email} className="mt-1 px-3 py-2 rounded-xl w-full bg-white/5 ring-1 ring-white/10 text-white/70" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700">Ubah Kata Sandi</label>
+              <label className="block text-sm font-medium text-white/90">Ubah Kata Sandi</label>
               <input
                 value={pwd}
                 onChange={(e) => setPwd(e.target.value)}
                 type="password"
-                className="mt-1 px-3 py-2 border border-slate-200 rounded-md w-full"
+                className="mt-1 px-3 py-2 rounded-xl w-full bg-white/10 ring-1 ring-white/15 text-white"
                 placeholder="Kosongkan jika tidak mengubah"
               />
             </div>
           </div>
           <div className="mt-4">
-            <button onClick={save} className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#050F2A] text-white">
-              <Settings size={16} /> Simpan Perubahan
-            </button>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={save} className="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white">
+              <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#B8A9FF] to-[#7BBBFF]" />
+              <span className="absolute inset-0 rounded-xl ring-1 ring-white/20" />
+              <span className="relative inline-flex items-center gap-2"><Settings size={16} /> Simpan Perubahan</span>
+            </motion.button>
           </div>
-        </div>
-      </div>
+        </Glass>
+      </motion.div>
     );
   };
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-8">
-      {currentPage === 'dashboard' && <DashboardHome />}
-      {currentPage === 'tugas' && <PageTugas />}
-      {currentPage === 'catatan' && <PageCatatan />}
-      {currentPage === 'shortcut' && <PageShortcut />}
-      {currentPage === 'profil' && <PageProfil />}
+    <section className="relative max-w-6xl mx-auto px-4 py-10 text-white">
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(70%_60%_at_10%_-10%,_rgba(124,187,255,0.25),_transparent),radial-gradient(70%_60%_at_90%_0%,_rgba(184,169,255,0.2),_transparent)]" />
+      <div className="relative">
+        {currentPage === 'dashboard' && <DashboardHome />}
+        {currentPage === 'tugas' && <PageTugas />}
+        {currentPage === 'catatan' && <PageCatatan />}
+        {currentPage === 'shortcut' && <PageShortcut />}
+        {currentPage === 'profil' && <PageProfil />}
 
-      {['dashboard', 'tugas', 'catatan', 'shortcut', 'profil'].includes(currentPage) === false && (
-        <div className="text-center py-12 text-slate-600">Halaman tidak ditemukan.</div>
-      )}
+        {['dashboard', 'tugas', 'catatan', 'shortcut', 'profil'].includes(currentPage) === false && (
+          <div className="text-center py-12 text-white/70">Halaman tidak ditemukan.</div>
+        )}
+      </div>
     </section>
   );
 }
